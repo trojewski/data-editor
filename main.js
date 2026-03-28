@@ -52,10 +52,10 @@ ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = false;
 scene.add(ground);
 
-const hexagonalPlateUrl = new URL("public/HexTile.glb", import.meta.url).href;
-const gameTileLabelUrl = new URL("public/TextLabel.glb", import.meta.url).href;
+const hexagonalPlateUrl = new URL("assets/HexTile.glb", import.meta.url).href;
+const gameTileLabelUrl = new URL("assets/TextLabel.glb", import.meta.url).href;
 const gameTileIconUrl = new URL(
-  encodeURI("public/game tile icon/TestObject.glb"),
+  encodeURI("assets/game tile icon/TestObject.glb"),
   import.meta.url
 ).href;
 
@@ -220,7 +220,7 @@ function setTimelinePlayButtonPlaying(playing) {
   if (!btn || !img) return;
   btn.setAttribute("aria-label", playing ? "Stop" : "Play");
   img.src = new URL(
-    playing ? "public/icon/icon-stop.svg" : "public/icon/icon-play.svg",
+    playing ? "assets/icon/icon-stop.svg" : "assets/icon/icon-play.svg",
     import.meta.url
   ).href;
 }
@@ -241,7 +241,7 @@ function setTimelineLoopButtonPlaying(playing) {
   if (!btn || !img) return;
   btn.setAttribute("aria-label", playing ? "Stop" : "Loop");
   img.src = new URL(
-    playing ? "public/icon/icon-stop.svg" : "public/icon/icon-loop.svg",
+    playing ? "assets/icon/icon-stop.svg" : "assets/icon/icon-loop.svg",
     import.meta.url
   ).href;
 }
