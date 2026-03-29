@@ -9,12 +9,80 @@
         margin: 0;
         box-sizing: border-box;
       }
+      @font-face {
+        font-family: "IBM Plex Sans";
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("assets/fonts/IBMPlexSans-Regular.ttf") format("truetype");
+      }
+      @font-face {
+        font-family: "IBM Plex Sans";
+        font-style: italic;
+        font-weight: 400;
+        font-display: swap;
+        src: url("assets/fonts/IBMPlexSans-Italic.ttf") format("truetype");
+      }
+      @font-face {
+        font-family: "IBM Plex Sans";
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url("assets/fonts/IBMPlexSans-Medium.ttf") format("truetype");
+      }
+      @font-face {
+        font-family: "IBM Plex Sans";
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("assets/fonts/IBMPlexSans-SemiBold.ttf") format("truetype");
+      }
+      @font-face {
+        font-family: "IBM Plex Sans";
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url("assets/fonts/IBMPlexSans-Bold.ttf") format("truetype");
+      }
+      :root {
+        --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+        --brand-50: #d6f4ff;
+        --brand-100: #b3eaff;
+        --brand-200: #61d4ff;
+        --brand-300: #15bfff;
+        --brand-400: #00aaeb;
+        --brand-500: #0090c7;
+        --brand-600: #03749e;
+        --brand-700: #045370;
+        --brand-800: #00384d;
+        --brand-900: #001e29;
+        --brand-950: #000f14;
+
+        --ui-bg-root: var(--brand-950);
+        --ui-bg-surface: var(--brand-900);
+        --ui-bg-raised: var(--brand-800);
+        --ui-bg-input: var(--brand-950);
+        --ui-bg-track: var(--brand-900);
+        --ui-border: var(--brand-800);
+        --ui-border-strong: var(--brand-700);
+        --ui-focus: var(--brand-500);
+        --ui-accent: var(--brand-400);
+        --ui-primary-bg: var(--brand-200);
+        --ui-primary-bg-hover: var(--brand-100);
+        --ui-primary-text: var(--brand-950);
+        --ui-backdrop: rgba(0, 15, 20, 0.75);
+        --ui-hover-glow: rgba(97, 212, 255, 0.14);
+
+        --scene-clear: #1a1a1a;
+        --scene-ground: #242424;
+      }
       html,
       body {
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: #1a1a1a;
+        background: var(--ui-bg-root);
+        font-family: var(--font-sans);
       }
       #app {
         display: flex;
@@ -27,14 +95,65 @@
         height: 100%;
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
-        padding: 1.25rem 1rem;
-        background: #1e1e1e;
-        border-right: 1px solid #333;
+        min-height: 0;
+        padding: 1.25rem 1rem 0;
+        background: var(--brand-900);
+        border-right: 1px solid var(--ui-border);
+        overflow: hidden;
+      }
+      .sidebar-body {
+        flex: 1;
+        min-height: 0;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        padding-bottom: 4.25rem;
+      }
+      .sidebar-bottom-bar {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        z-index: 20;
+        width: 320px;
+        display: flex;
+        flex-direction: row;
+        margin: 0;
+        padding: 0;
+        gap: 0;
+        box-sizing: border-box;
+        border-top: 1px solid var(--ui-border);
+        border-right: 1px solid var(--ui-border);
+      }
+      .sidebar-bottom-bar button {
+        flex: 1 1 50%;
+        min-width: 0;
+        margin: 0;
+        padding: 0.65rem 0.5rem;
+        box-sizing: border-box;
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--ui-primary-text);
+        background: var(--ui-primary-bg);
+        border: none;
+        border-radius: 0;
+        cursor: pointer;
+      }
+      .sidebar-bottom-bar button:first-child {
+        border-right: 1px solid var(--ui-border);
+      }
+      .sidebar-bottom-bar button:hover {
+        background: var(--ui-primary-bg-hover);
+      }
+      .sidebar-bottom-bar button:focus-visible {
+        outline: 2px solid var(--ui-focus);
+        outline-offset: -2px;
+        position: relative;
+        z-index: 1;
       }
       #sidebar h1 {
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 1.125rem;
         font-weight: 600;
         letter-spacing: -0.02em;
@@ -48,14 +167,14 @@
         min-width: 0;
       }
       .sidebar-section__title {
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.6875rem;
         font-weight: 600;
         letter-spacing: 0.05em;
         text-transform: uppercase;
         color: #888;
         padding-bottom: 0.35rem;
-        border-bottom: 1px solid #333;
+        border-bottom: 1px solid var(--ui-border);
         line-height: 1.3;
       }
       .sidebar-field {
@@ -64,7 +183,7 @@
         gap: 0.5rem;
       }
       .sidebar-field label {
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.8125rem;
         font-weight: 500;
         color: #b8b8b8;
@@ -72,52 +191,147 @@
       .sidebar-field select {
         width: 100%;
         padding: 0.5rem 0.65rem;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.875rem;
         color: #e8e8e8;
-        background: #2a2a2a;
-        border: 1px solid #404040;
+        background: var(--ui-bg-input);
+        border: 1px solid var(--ui-border);
         border-radius: 6px;
         cursor: pointer;
         appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2361D4FF' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 0.65rem center;
         padding-right: 2rem;
       }
       .sidebar-field select:hover {
-        border-color: #555;
+        border-color: var(--ui-border-strong);
       }
       .sidebar-field select:focus {
         outline: none;
-        border-color: #666;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08);
+        border-color: var(--ui-focus);
+        box-shadow: 0 0 0 2px rgba(0, 144, 199, 0.35);
       }
       .sidebar-field input[type="number"] {
         width: 100%;
         padding: 0.5rem 0.65rem;
         box-sizing: border-box;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.875rem;
         color: #e8e8e8;
-        background: #2a2a2a;
-        border: 1px solid #404040;
+        background: var(--ui-bg-input);
+        border: 1px solid var(--ui-border);
         border-radius: 6px;
         -moz-appearance: textfield;
         appearance: textfield;
       }
       .sidebar-field input[type="number"]:hover {
-        border-color: #555;
+        border-color: var(--ui-border-strong);
       }
       .sidebar-field input[type="number"]:focus {
         outline: none;
-        border-color: #666;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08);
+        border-color: var(--ui-focus);
+        box-shadow: 0 0 0 2px rgba(0, 144, 199, 0.35);
       }
       .sidebar-field input[type="number"]::-webkit-outer-spin-button,
       .sidebar-field input[type="number"]::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
+      }
+      #dynamic-select-trigger,
+      #game-tile-select-trigger,
+      #game-tile-icon-select-trigger,
+      #animation-select-trigger,
+      #timeline-duration-input {
+        border: none;
+        background-color: var(--brand-950);
+      }
+      #dynamic-select-trigger:focus,
+      #dynamic-select-trigger:focus-visible,
+      #game-tile-select-trigger:focus,
+      #game-tile-select-trigger:focus-visible,
+      #game-tile-icon-select-trigger:focus,
+      #game-tile-icon-select-trigger:focus-visible,
+      #animation-select-trigger:focus,
+      #animation-select-trigger:focus-visible,
+      #timeline-duration-input:focus {
+        outline: none;
+        border: none;
+        box-shadow: 0 0 0 2px rgba(0, 144, 199, 0.45);
+      }
+      .sidebar-custom-select {
+        position: relative;
+        width: 100%;
+      }
+      .sidebar-custom-select__trigger {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.5rem 0.65rem;
+        box-sizing: border-box;
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        color: #e8e8e8;
+        border-radius: 6px;
+        cursor: pointer;
+        text-align: left;
+      }
+      .sidebar-custom-select__trigger-text {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .sidebar-custom-select__caret {
+        flex-shrink: 0;
+        width: 12px;
+        height: 12px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2361D4FF' d='M6 8L2 4h8z'/%3E%3C/svg%3E")
+          center / contain no-repeat;
+        pointer-events: none;
+      }
+      .sidebar-custom-select__menu {
+        position: fixed;
+        z-index: 500;
+        margin: 0;
+        padding: 0.35rem 0;
+        list-style: none;
+        max-height: min(320px, 50vh);
+        overflow-y: auto;
+        background: var(--brand-900);
+        border: 1px solid var(--ui-border);
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 15, 20, 0.55);
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+      }
+      .sidebar-custom-select__menu[hidden] {
+        display: none !important;
+      }
+      .sidebar-custom-select__option {
+        display: block;
+        width: 100%;
+        padding: 0.45rem 0.65rem;
+        box-sizing: border-box;
+        font: inherit;
+        color: #e8e8e8;
+        text-align: left;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+      }
+      .sidebar-custom-select__option--child {
+        padding-left: 1.5rem;
+      }
+      .sidebar-custom-select__option:hover,
+      .sidebar-custom-select__option--highlight {
+        background: var(--brand-800);
+      }
+      .sidebar-custom-select__option[aria-selected="true"] {
+        font-weight: 600;
       }
       #main-column {
         flex: 1;
@@ -132,7 +346,7 @@
         min-width: 0;
         min-height: 0;
         position: relative;
-        background: #1a1a1a;
+        background: var(--scene-clear);
       }
       #viewport canvas {
         display: block;
@@ -144,8 +358,8 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        background: #1e1e1e;
-        border-top: 1px solid #333;
+        background: var(--brand-900);
+        border-top: 1px solid var(--ui-border);
       }
       .timeline-bar-header {
         position: relative;
@@ -155,7 +369,9 @@
         min-height: 56px;
         padding: 0 0.65rem;
         padding-bottom: 5px;
-        border-bottom: 1px solid #333;
+        background: var(--brand-900);
+        border-bottom: 1px solid var(--ui-border);
+        overflow: visible;
       }
       .timeline-animation-progress {
         position: absolute;
@@ -163,7 +379,7 @@
         left: 0;
         right: 0;
         height: 3px;
-        background: #2a2a2a;
+        background: var(--ui-bg-track);
         pointer-events: none;
       }
       .timeline-animation-progress[hidden] {
@@ -172,22 +388,27 @@
       .timeline-animation-progress__fill {
         height: 100%;
         width: 0%;
-        background: #8ab4d4;
+        background: var(--ui-accent);
         border-radius: 0 1px 1px 0;
       }
       .time-scrubber {
         flex-shrink: 0;
         width: 100%;
         padding: 0.5rem 0.65rem 0.65rem;
+        background: var(--brand-900);
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
       }
       .time-scrubber-track {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 16px;
-        width: 100%;
+        width: max-content;
+        min-width: 100%;
         min-height: 44px;
         padding: 0 0.5rem;
         box-sizing: border-box;
@@ -199,18 +420,18 @@
         justify-content: center;
         padding: 0.28rem 0.5rem;
         min-height: 1.65rem;
-        border: 1px solid #404040;
+        border: 1px solid var(--ui-border);
         border-radius: 4px;
-        background: #2a2a2a;
+        background: var(--ui-bg-input);
         cursor: pointer;
         color: #e8e8e8;
       }
       .timeline-keyframe-btn:hover {
-        background: #333;
-        border-color: #555;
+        background: var(--ui-bg-raised);
+        border-color: var(--ui-border-strong);
       }
       .timeline-keyframe-btn:focus-visible {
-        outline: 2px solid #666;
+        outline: 2px solid var(--ui-focus);
         outline-offset: 2px;
       }
       .timeline-keyframe-label {
@@ -219,7 +440,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.6875rem;
         font-weight: 500;
         line-height: 1.25;
@@ -232,17 +453,20 @@
         display: flex;
         align-items: center;
       }
-      .timeline-bar-side--trailing {
-        justify-content: flex-end;
-      }
       .timeline-bar-icons {
         flex: 0 0 auto;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 1.5rem;
+        overflow: visible;
+      }
+      .timeline-bar-side--trailing {
+        justify-content: flex-end;
+        overflow: visible;
       }
       .timeline-icon-btn {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -252,12 +476,42 @@
         background: transparent;
         cursor: pointer;
         color: #e0e0e0;
+        overflow: visible;
+      }
+      .timeline-icon-btn[data-tooltip]::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: 50%;
+        bottom: 100%;
+        transform: translateX(-50%);
+        margin-bottom: 6px;
+        padding: 0.35rem 0.55rem;
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1.2;
+        white-space: nowrap;
+        color: #f0f0f0;
+        background: var(--ui-bg-raised);
+        border: 1px solid var(--ui-border-strong);
+        border-radius: 6px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        z-index: 200;
+        transition: opacity 0.1s ease, visibility 0.1s ease;
+      }
+      .timeline-icon-btn[data-tooltip]:hover::after,
+      .timeline-icon-btn[data-tooltip]:focus-visible::after {
+        opacity: 1;
+        visibility: visible;
       }
       .timeline-icon-btn:hover {
-        background: rgba(255, 255, 255, 0.08);
+        background: var(--ui-hover-glow);
       }
       .timeline-icon-btn:focus-visible {
-        outline: 2px solid #666;
+        outline: 2px solid var(--ui-focus);
         outline-offset: 2px;
       }
       .timeline-icon-btn img {
@@ -280,7 +534,7 @@
       .edit-keyframe-modal__backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: var(--ui-backdrop);
       }
       .edit-keyframe-modal__panel {
         position: relative;
@@ -288,10 +542,10 @@
         width: 100%;
         max-width: 440px;
         padding: 1.35rem 1.25rem 1.25rem;
-        background: #2a2a2a;
-        border: 1px solid #444;
+        background: var(--ui-bg-raised);
+        border: 1px solid var(--ui-border-strong);
         border-radius: 10px;
-        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+        box-shadow: 0 16px 48px rgba(0, 15, 20, 0.55);
       }
       .edit-keyframe-modal__close {
         position: absolute;
@@ -305,7 +559,7 @@
         padding: 0;
         border: none;
         border-radius: 6px;
-        font-family: system-ui, sans-serif;
+        font-family: var(--font-sans);
         font-size: 1.35rem;
         line-height: 1;
         color: #c8c8c8;
@@ -313,15 +567,15 @@
         cursor: pointer;
       }
       .edit-keyframe-modal__close:hover {
-        background: rgba(255, 255, 255, 0.08);
+        background: var(--ui-hover-glow);
         color: #f0f0f0;
       }
       .edit-keyframe-modal__close:focus-visible {
-        outline: 2px solid #888;
+        outline: 2px solid var(--ui-focus);
         outline-offset: 2px;
       }
       .edit-keyframe-modal__title {
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 1.125rem;
         font-weight: 600;
         color: #f0f0f0;
@@ -335,7 +589,7 @@
         margin-bottom: 1.15rem;
       }
       .edit-keyframe-modal__field label {
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.8125rem;
         font-weight: 500;
         color: #b8b8b8;
@@ -345,17 +599,17 @@
       .edit-keyframe-modal__field textarea {
         width: 100%;
         padding: 0.5rem 0.65rem;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.9375rem;
         color: #e8e8e8;
-        background: #1e1e1e;
-        border: 1px solid #404040;
+        background: var(--ui-bg-input);
+        border: 1px solid var(--ui-border);
         border-radius: 6px;
       }
       .edit-keyframe-modal__field select {
         cursor: pointer;
         appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2361D4FF' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 0.65rem center;
         padding-right: 2rem;
@@ -369,33 +623,33 @@
       .edit-keyframe-modal__field select:focus,
       .edit-keyframe-modal__field textarea:focus {
         outline: none;
-        border-color: #666;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08);
+        border-color: var(--ui-focus);
+        box-shadow: 0 0 0 2px rgba(0, 144, 199, 0.35);
       }
       .edit-keyframe-modal__save {
         width: 100%;
         padding: 0.55rem 0.85rem;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.875rem;
         font-weight: 500;
-        color: #1a1a1a;
-        background: #e8e8e8;
+        color: var(--ui-primary-text);
+        background: var(--ui-primary-bg);
         border: none;
         border-radius: 6px;
         cursor: pointer;
       }
       .edit-keyframe-modal__save:hover {
-        background: #fff;
+        background: var(--ui-primary-bg-hover);
       }
       .edit-keyframe-modal__save:focus-visible {
-        outline: 2px solid #888;
+        outline: 2px solid var(--ui-focus);
         outline-offset: 2px;
       }
       .edit-keyframe-modal__delete {
         width: 100%;
         margin-top: 0.65rem;
         padding: 0.55rem 0.85rem;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.875rem;
         font-weight: 500;
         color: #f0b0b0;
@@ -422,7 +676,7 @@
         align-items: center;
         justify-content: center;
         padding: 1rem;
-        background: #141414;
+        background: var(--ui-bg-root);
       }
       #auth-gate[hidden] {
         display: none !important;
@@ -431,13 +685,13 @@
         width: 100%;
         max-width: 380px;
         padding: 1.5rem 1.35rem 1.35rem;
-        background: #2a2a2a;
-        border: 1px solid #444;
+        background: var(--brand-900);
+        border: none;
         border-radius: 10px;
-        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 16px 48px rgba(0, 15, 20, 0.55);
       }
       .auth-gate__title {
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 1.125rem;
         font-weight: 600;
         color: #f0f0f0;
@@ -445,7 +699,7 @@
         letter-spacing: -0.02em;
       }
       .auth-gate__subtitle {
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.8125rem;
         color: #888;
         margin: 0 0 1.25rem;
@@ -458,7 +712,7 @@
         margin-bottom: 1rem;
       }
       .auth-gate__field label {
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.8125rem;
         font-weight: 500;
         color: #b8b8b8;
@@ -467,20 +721,31 @@
         width: 100%;
         padding: 0.5rem 0.65rem;
         box-sizing: border-box;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.9375rem;
         color: #e8e8e8;
-        background: #1e1e1e;
-        border: 1px solid #404040;
+        background: var(--ui-bg-input);
+        border: 1px solid var(--ui-border);
         border-radius: 6px;
       }
       .auth-gate__field input:focus {
         outline: none;
-        border-color: #666;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08);
+        border-color: var(--ui-focus);
+        box-shadow: 0 0 0 2px rgba(0, 144, 199, 0.35);
+      }
+      #auth-username,
+      #auth-password {
+        border: none;
+        background-color: var(--brand-950);
+      }
+      #auth-username:focus,
+      #auth-password:focus {
+        outline: none;
+        border: none;
+        box-shadow: 0 0 0 2px rgba(0, 144, 199, 0.35);
       }
       .auth-gate__error {
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.8125rem;
         color: #e8a0a0;
         margin: 0 0 0.85rem;
@@ -492,20 +757,20 @@
       .auth-gate__submit {
         width: 100%;
         padding: 0.55rem 0.85rem;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-sans);
         font-size: 0.875rem;
         font-weight: 500;
-        color: #1a1a1a;
-        background: #e8e8e8;
+        color: var(--ui-primary-text);
+        background: var(--ui-primary-bg);
         border: none;
         border-radius: 6px;
         cursor: pointer;
       }
       .auth-gate__submit:hover {
-        background: #fff;
+        background: var(--ui-primary-bg-hover);
       }
       .auth-gate__submit:focus-visible {
-        outline: 2px solid #888;
+        outline: 2px solid var(--ui-focus);
         outline-offset: 2px;
       }
     </style>
@@ -551,6 +816,7 @@
     </div>
     <div id="app">
       <aside id="sidebar" aria-label="Scene settings">
+        <div class="sidebar-body">
         <h1>Firecircle Data Editor</h1>
 
         <section
@@ -561,45 +827,84 @@
             Game Tile
           </h2>
           <div class="sidebar-field">
-            <label for="dynamic-select">Dynamic</label>
-            <select id="dynamic-select" name="dynamic">
-              <option value="plutonomic-consequences" selected>
-                Plutonomic Consequences
-              </option>
-              <option value="power-transition-and-neomercantilism">
-                Power Transition and Neomercantilism
-              </option>
-            </select>
+            <label id="dynamic-select-label" for="dynamic-select-trigger">Dynamic</label>
+            <input
+              type="hidden"
+              id="dynamic-value"
+              name="dynamic"
+              value="plutonomic-consequences"
+            />
+            <div class="sidebar-custom-select" id="dynamic-custom-select">
+              <button
+                type="button"
+                id="dynamic-select-trigger"
+                class="sidebar-custom-select__trigger"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="dynamic-select-menu"
+                aria-labelledby="dynamic-select-label"
+              >
+                <span
+                  class="sidebar-custom-select__trigger-text"
+                  id="dynamic-select-text"
+                  >Plutonomic Consequences</span
+                >
+                <span class="sidebar-custom-select__caret" aria-hidden="true"></span>
+              </button>
+            </div>
           </div>
 
           <div class="sidebar-field">
-            <label for="entity-select">Entity</label>
-            <select id="entity-select" name="entity">
-              <option value="elites" selected>Elites</option>
-              <option value="counter-elites">Counter Elites</option>
-              <option value="elite-aspirants">Elite Aspirants</option>
-              <option value="general-population">General Population</option>
-              <option value="state">State</option>
-              <option value="institutions">Institutions</option>
-              <option value="companies">Companies</option>
-              <option value="market">Market</option>
-              <option value="four-horsemen">Four Horsemen</option>
-            </select>
+            <label id="game-tile-select-label" for="game-tile-select-trigger"
+              >Game Tile</label
+            >
+            <input type="hidden" id="game-tile-value" name="gameTile" value="elites" />
+            <div class="sidebar-custom-select" id="game-tile-custom-select">
+              <button
+                type="button"
+                id="game-tile-select-trigger"
+                class="sidebar-custom-select__trigger"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="game-tile-select-menu"
+                aria-labelledby="game-tile-select-label"
+              >
+                <span class="sidebar-custom-select__trigger-text" id="game-tile-select-text"
+                  >Elites</span
+                >
+                <span class="sidebar-custom-select__caret" aria-hidden="true"></span>
+              </button>
+            </div>
           </div>
 
           <div class="sidebar-field">
-            <label for="property-select">Property</label>
-            <select id="property-select" name="property">
-              <option value="none" selected>None</option>
-              <option value="wealth">Wealth</option>
-            </select>
-          </div>
-
-          <div class="sidebar-field">
-            <label for="game-tile-icon-select">Game Tile Icon</label>
-            <select id="game-tile-icon-select" name="gameTileIcon">
-              <option value="test-object" selected>Test Object</option>
-            </select>
+            <label id="game-tile-icon-select-label" for="game-tile-icon-select-trigger"
+              >Game Tile Icon</label
+            >
+            <input
+              type="hidden"
+              id="game-tile-icon-value"
+              name="gameTileIcon"
+              value="test-object"
+            />
+            <div class="sidebar-custom-select" id="game-tile-icon-custom-select">
+              <button
+                type="button"
+                id="game-tile-icon-select-trigger"
+                class="sidebar-custom-select__trigger"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="game-tile-icon-select-menu"
+                aria-labelledby="game-tile-icon-select-label"
+              >
+                <span
+                  class="sidebar-custom-select__trigger-text"
+                  id="game-tile-icon-select-text"
+                  >Test Object</span
+                >
+                <span class="sidebar-custom-select__caret" aria-hidden="true"></span>
+              </button>
+            </div>
           </div>
         </section>
 
@@ -611,10 +916,28 @@
             Animation
           </h2>
           <div class="sidebar-field">
-            <label for="animation-select">Animation Type</label>
-            <select id="animation-select" name="animation">
-              <option value="grow" selected>Grow</option>
-            </select>
+            <label id="animation-select-label" for="animation-select-trigger"
+              >Animation Type</label
+            >
+            <input type="hidden" id="animation-value" name="animation" value="grow" />
+            <div class="sidebar-custom-select" id="animation-custom-select">
+              <button
+                type="button"
+                id="animation-select-trigger"
+                class="sidebar-custom-select__trigger"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="animation-select-menu"
+                aria-labelledby="animation-select-label"
+              >
+                <span
+                  class="sidebar-custom-select__trigger-text"
+                  id="animation-select-text"
+                  >Grow</span
+                >
+                <span class="sidebar-custom-select__caret" aria-hidden="true"></span>
+              </button>
+            </div>
           </div>
 
           <div class="sidebar-field">
@@ -630,6 +953,19 @@
             />
           </div>
         </section>
+        </div>
+        <div class="sidebar-bottom-bar" role="group" aria-label="Sidebar actions">
+          <button type="button" id="save-button" aria-label="Save">
+            Save
+          </button>
+          <button
+            type="button"
+            id="export-json-button"
+            aria-label="Export JSON"
+          >
+            Export JSON
+          </button>
+        </div>
       </aside>
       <div id="main-column">
         <div id="viewport" aria-label="3D scene"></div>
@@ -648,7 +984,8 @@
                 type="button"
                 id="timeline-play-button"
                 class="timeline-icon-btn"
-                aria-label="Play"
+                aria-label="Play Timeline"
+                data-tooltip="Play Timeline"
               >
                 <img
                   id="timeline-play-button-icon"
@@ -662,7 +999,8 @@
                 type="button"
                 id="timeline-loop-button"
                 class="timeline-icon-btn"
-                aria-label="Loop"
+                aria-label="Loop Timeline"
+                data-tooltip="Loop Timeline"
               >
                 <img
                   id="timeline-loop-button-icon"
@@ -678,7 +1016,8 @@
                 type="button"
                 id="add-keyframe-button"
                 class="timeline-icon-btn"
-                aria-label="Add keyframe"
+                aria-label="Add Keyframe"
+                data-tooltip="Add Keyframe"
               >
                 <img
                   src="assets/icon/icon-plus.svg"
@@ -736,6 +1075,17 @@
           Edit Keyframe
         </h2>
         <div class="edit-keyframe-modal__field">
+          <label for="keyframe-year-input">Year</label>
+          <input
+            id="keyframe-year-input"
+            name="keyframeYear"
+            type="text"
+            autocomplete="off"
+            value="2026"
+            placeholder="e.g. 2026 or 250 BC"
+          />
+        </div>
+        <div class="edit-keyframe-modal__field">
           <label for="keyframe-value-input">Value</label>
           <input
             id="keyframe-value-input"
@@ -745,17 +1095,6 @@
             max="1"
             step="0.01"
             value="1"
-          />
-        </div>
-        <div class="edit-keyframe-modal__field">
-          <label for="keyframe-year-input">Year</label>
-          <input
-            id="keyframe-year-input"
-            name="keyframeYear"
-            type="text"
-            autocomplete="off"
-            value="2026"
-            placeholder="e.g. 2026 or 250 BC"
           />
         </div>
         <div class="edit-keyframe-modal__field">
@@ -813,6 +1152,17 @@
           Add Keyframe
         </h2>
         <div class="edit-keyframe-modal__field">
+          <label for="add-keyframe-year-input">Year</label>
+          <input
+            id="add-keyframe-year-input"
+            name="addKeyframeYear"
+            type="text"
+            autocomplete="off"
+            value="2026"
+            placeholder="e.g. 2026 or 250 BC"
+          />
+        </div>
+        <div class="edit-keyframe-modal__field">
           <label for="add-keyframe-value-input">Value</label>
           <input
             id="add-keyframe-value-input"
@@ -822,17 +1172,6 @@
             max="1"
             step="0.01"
             value="1"
-          />
-        </div>
-        <div class="edit-keyframe-modal__field">
-          <label for="add-keyframe-year-input">Year</label>
-          <input
-            id="add-keyframe-year-input"
-            name="addKeyframeYear"
-            type="text"
-            autocomplete="off"
-            value="2026"
-            placeholder="e.g. 2026 or 250 BC"
           />
         </div>
         <div class="edit-keyframe-modal__field">
@@ -861,6 +1200,34 @@
         </button>
       </div>
     </div>
+    <ul
+      id="game-tile-select-menu"
+      class="sidebar-custom-select__menu"
+      role="listbox"
+      hidden
+      aria-labelledby="game-tile-select-label"
+    ></ul>
+    <ul
+      id="dynamic-select-menu"
+      class="sidebar-custom-select__menu"
+      role="listbox"
+      hidden
+      aria-labelledby="dynamic-select-label"
+    ></ul>
+    <ul
+      id="game-tile-icon-select-menu"
+      class="sidebar-custom-select__menu"
+      role="listbox"
+      hidden
+      aria-labelledby="game-tile-icon-select-label"
+    ></ul>
+    <ul
+      id="animation-select-menu"
+      class="sidebar-custom-select__menu"
+      role="listbox"
+      hidden
+      aria-labelledby="animation-select-label"
+    ></ul>
     <script>
       (function () {
         const AUTH_USERNAME = "detroit";

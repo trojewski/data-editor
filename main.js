@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-const BG = 0x2a2a2a;
+const BG = 0x1a1a1a;
 
 const viewport = document.getElementById("viewport");
 
@@ -62,6 +62,260 @@ const gameTileIconUrl = new URL(
 const GAME_TILE_LABEL_CLEARANCE = 0.08;
 const GAME_TILE_ICON_CLEARANCE_ABOVE_LABEL = 0.08;
 
+/** Game Tile Dropdown: parents (child: false) and indented children (child: true). */
+const GAME_TILE_CHOICES = [
+  { value: "elites", label: "Elites", child: false },
+  { value: "elite-competitiveness", label: "Elite Competitiveness", child: true },
+  { value: "elite-polarization", label: "Elite Polarization", child: true },
+  { value: "elite-influence", label: "Elite Influence", child: true },
+  { value: "elite-wealth", label: "Elite Wealth", child: true },
+  { value: "counter-elites", label: "Counter Elites", child: false },
+  { value: "counter-elite-radicalization", label: "Counter Elite Radicalization", child: true },
+  { value: "elite-aspirants", label: "Elite Aspirants", child: false },
+  { value: "general-population", label: "General Population", child: false },
+  { value: "general-population-wealth", label: "General Population Wealth", child: true },
+  { value: "general-population-debt", label: "General Population Debt", child: true },
+  { value: "general-population-labor", label: "General Population Labor", child: true },
+  { value: "general-population-polarization", label: "General Population Polarization", child: true },
+  { value: "general-population-radicalization", label: "General Population Radicalization", child: true },
+  { value: "general-population-immiseration", label: "General Population Immiseration", child: true },
+  { value: "state", label: "State", child: false },
+  { value: "state-lobbies", label: "State Lobbies", child: true },
+  { value: "state-institutional-health", label: "State Institutional Health", child: true },
+  { value: "state-wealth", label: "State Wealth", child: true },
+  { value: "state-debt", label: "State Debt", child: true },
+  { value: "state-stability", label: "State Stability", child: true },
+  { value: "institutions", label: "Institutions", child: false },
+  { value: "institution-wealth", label: "Institution Wealth", child: true },
+  { value: "institution-credit", label: "Institution Credit", child: true },
+  { value: "institution-health", label: "Institution Health", child: true },
+  { value: "market", label: "Market", child: false },
+  { value: "companies", label: "Companies", child: false },
+  { value: "four-horsemen", label: "Four Horsemen", child: false },
+];
+
+const DYNAMIC_CHOICES = [
+  {
+    value: "plutonomic-consequences",
+    label: "Plutonomic Consequences",
+    child: false,
+  },
+  {
+    value: "power-transition-and-neomercantilism",
+    label: "Power Transition and Neomercantilism",
+    child: false,
+  },
+];
+
+const GAME_TILE_ICON_CHOICES = [
+  { value: "test-object", label: "Test Object", child: false },
+];
+
+const ANIMATION_CHOICES = [{ value: "grow", label: "Grow", child: false }];
+
+/** @type {null | (() => void)} */
+let sidebarCustomSelectActiveCloser = null;
+
+/**
+ * @param {{ value: string; label: string; child?: boolean }[]} choices
+ * @param {string} triggerId
+ * @param {string} menuId
+ * @param {string} hiddenId
+ * @param {string} textId
+ * @param {string} optionIdPrefix
+ */
+function initSidebarCustomSelect({
+  choices,
+  triggerId,
+  menuId,
+  hiddenId,
+  textId,
+  optionIdPrefix,
+}) {
+  const trigger = document.getElementById(triggerId);
+  const menu = document.getElementById(menuId);
+  const hidden = document.getElementById(hiddenId);
+  const textEl = document.getElementById(textId);
+  if (!trigger || !menu || !hidden || !textEl) return;
+
+  /** @type {HTMLButtonElement[]} */
+  const optionEls = [];
+
+  for (let i = 0; i < choices.length; i++) {
+    const choice = choices[i];
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.setAttribute("role", "option");
+    const safe = choice.value.replace(/[^a-z0-9-]/gi, "-");
+    btn.id = `${optionIdPrefix}-opt-${safe}`;
+    btn.className = choice.child
+      ? "sidebar-custom-select__option sidebar-custom-select__option--child"
+      : "sidebar-custom-select__option";
+    btn.textContent = choice.label;
+    btn.dataset.value = choice.value;
+    menu.appendChild(btn);
+    optionEls.push(btn);
+  }
+
+  let open = false;
+  let highlightIdx = 0;
+
+  function choiceIndexByValue(v) {
+    return choices.findIndex((c) => c.value === v);
+  }
+
+  function syncSelectionDisplay() {
+    const v = hidden.value;
+    const ch = choices.find((c) => c.value === v);
+    textEl.textContent = ch ? ch.label : v;
+    for (let i = 0; i < optionEls.length; i++) {
+      optionEls[i].setAttribute(
+        "aria-selected",
+        choices[i].value === v ? "true" : "false"
+      );
+    }
+  }
+
+  function clearHighlight() {
+    optionEls.forEach((el) =>
+      el.classList.remove("sidebar-custom-select__option--highlight")
+    );
+    menu.removeAttribute("aria-activedescendant");
+  }
+
+  function setHighlight(idx) {
+    if (idx < 0 || idx >= optionEls.length) return;
+    clearHighlight();
+    highlightIdx = idx;
+    const el = optionEls[idx];
+    el.classList.add("sidebar-custom-select__option--highlight");
+    menu.setAttribute("aria-activedescendant", el.id);
+    el.scrollIntoView({ block: "nearest" });
+  }
+
+  function positionMenu() {
+    const r = trigger.getBoundingClientRect();
+    menu.style.top = `${Math.round(r.bottom + 4)}px`;
+    menu.style.left = `${Math.round(r.left)}px`;
+    menu.style.width = `${Math.round(r.width)}px`;
+  }
+
+  function onDocPointerDown(e) {
+    if (!open) return;
+    const t = e.target;
+    if (trigger.contains(t) || menu.contains(t)) return;
+    closeMenu();
+  }
+
+  function onReposition() {
+    if (open) positionMenu();
+  }
+
+  function onMenuKeydown(e) {
+    if (!open) return;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+      closeMenu();
+      trigger.focus();
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlight(Math.min(highlightIdx + 1, optionEls.length - 1));
+      return;
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlight(Math.max(highlightIdx - 1, 0));
+      return;
+    }
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      selectByIndex(highlightIdx);
+    }
+  }
+
+  function closeMenu() {
+    if (!open) return;
+    open = false;
+    menu.hidden = true;
+    trigger.setAttribute("aria-expanded", "false");
+    clearHighlight();
+    window.removeEventListener("resize", onReposition);
+    window.removeEventListener("scroll", onReposition, true);
+    document.removeEventListener("pointerdown", onDocPointerDown, true);
+    document.removeEventListener("keydown", onMenuKeydown, true);
+    if (sidebarCustomSelectActiveCloser === closeMenu) {
+      sidebarCustomSelectActiveCloser = null;
+    }
+  }
+
+  function openMenu() {
+    if (open) return;
+    if (
+      sidebarCustomSelectActiveCloser &&
+      sidebarCustomSelectActiveCloser !== closeMenu
+    ) {
+      sidebarCustomSelectActiveCloser();
+    }
+    open = true;
+    sidebarCustomSelectActiveCloser = closeMenu;
+    positionMenu();
+    menu.hidden = false;
+    trigger.setAttribute("aria-expanded", "true");
+    const sel = choiceIndexByValue(hidden.value);
+    highlightIdx = sel >= 0 ? sel : 0;
+    setHighlight(highlightIdx);
+    window.addEventListener("resize", onReposition);
+    window.addEventListener("scroll", onReposition, true);
+    document.addEventListener("pointerdown", onDocPointerDown, true);
+    document.addEventListener("keydown", onMenuKeydown, true);
+  }
+
+  function selectByIndex(idx) {
+    const c = choices[idx];
+    if (!c) return;
+    hidden.value = c.value;
+    syncSelectionDisplay();
+    closeMenu();
+    trigger.focus();
+    hidden.dispatchEvent(new Event("input", { bubbles: true }));
+    hidden.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  trigger.addEventListener("click", () => {
+    if (open) closeMenu();
+    else openMenu();
+  });
+
+  trigger.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!open) openMenu();
+      if (e.key === "ArrowDown") {
+        setHighlight(Math.min(highlightIdx + 1, optionEls.length - 1));
+      } else {
+        setHighlight(Math.max(highlightIdx - 1, 0));
+      }
+    }
+  });
+
+  for (let i = 0; i < optionEls.length; i++) {
+    const idx = i;
+    optionEls[i].addEventListener("click", () => selectByIndex(idx));
+    optionEls[i].addEventListener("mouseenter", () => {
+      if (!open) return;
+      clearHighlight();
+      highlightIdx = idx;
+      optionEls[idx].classList.add("sidebar-custom-select__option--highlight");
+      menu.setAttribute("aria-activedescendant", optionEls[idx].id);
+    });
+  }
+
+  syncSelectionDisplay();
+}
+
 const KEYFRAME_SCALE_MIN = 0.1;
 const KEYFRAME_SCALE_MAX = 1;
 const DEFAULT_TIMELINE_DURATION_MS = 2000;
@@ -119,20 +373,30 @@ function updateGameTileLabelYawBillboard() {
     .multiply(_qLabelBillboardYawAdjust);
 }
 
-const INITIAL_KEYFRAME_ID = "kf-initial";
+const INITIAL_SELECTED_KEYFRAME_ID = "kf-2025";
 
 /** @type {{ id: string; value: number; year: string; status: string; notes: string }[]} */
 let keyframes = [
-  {
-    id: INITIAL_KEYFRAME_ID,
-    value: 1,
-    year: "2026",
-    status: "neutral",
-    notes: "",
-  },
+  { id: "kf-1945", value: 0.1, year: "1945", status: "neutral", notes: "" },
+  { id: "kf-1950", value: 0.75, year: "1950", status: "neutral", notes: "" },
+  { id: "kf-1955", value: 1, year: "1955", status: "neutral", notes: "" },
+  { id: "kf-1960", value: 1, year: "1960", status: "neutral", notes: "" },
+  { id: "kf-1965", value: 1, year: "1965", status: "neutral", notes: "" },
+  { id: "kf-1970", value: 0.75, year: "1970", status: "neutral", notes: "" },
+  { id: "kf-1975", value: 0.5, year: "1975", status: "neutral", notes: "" },
+  { id: "kf-1980", value: 0.25, year: "1980", status: "neutral", notes: "" },
+  { id: "kf-1985", value: 0.1, year: "1985", status: "neutral", notes: "" },
+  { id: "kf-1990", value: 0.5, year: "1990", status: "neutral", notes: "" },
+  { id: "kf-1995", value: 0.5, year: "1995", status: "neutral", notes: "" },
+  { id: "kf-2000", value: 0.75, year: "2000", status: "neutral", notes: "" },
+  { id: "kf-2005", value: 0.75, year: "2005", status: "neutral", notes: "" },
+  { id: "kf-2010", value: 0.1, year: "2010", status: "neutral", notes: "" },
+  { id: "kf-2015", value: 0.25, year: "2015", status: "neutral", notes: "" },
+  { id: "kf-2020", value: 0.3, year: "2020", status: "neutral", notes: "" },
+  { id: "kf-2025", value: 0.4, year: "2025", status: "neutral", notes: "" },
 ];
 /** @type {string | null} */
-let selectedKeyframeId = INITIAL_KEYFRAME_ID;
+let selectedKeyframeId = INITIAL_SELECTED_KEYFRAME_ID;
 /** @type {string | null} */
 let editingKeyframeId = null;
 
@@ -539,7 +803,9 @@ function openEditKeyframeModalFor(id) {
   if (keyframeStatusSelect) keyframeStatusSelect.value = k.status;
   if (keyframeNotesInput) keyframeNotesInput.value = k.notes;
   editKeyframeModal.hidden = false;
-  requestAnimationFrame(() => keyframeValueInput.focus());
+  requestAnimationFrame(() =>
+    (keyframeYearInput ?? keyframeValueInput)?.focus()
+  );
 }
 
 function closeEditKeyframeModalDiscard() {
@@ -590,7 +856,9 @@ function openAddKeyframeModal() {
   if (addKeyframeStatusSelect) addKeyframeStatusSelect.value = "neutral";
   if (addKeyframeNotesInput) addKeyframeNotesInput.value = "";
   addKeyframeModal.hidden = false;
-  requestAnimationFrame(() => addKeyframeValueInput.focus());
+  requestAnimationFrame(() =>
+    (addKeyframeYearInput ?? addKeyframeValueInput)?.focus()
+  );
 }
 
 function closeAddKeyframeModalDiscard() {
@@ -649,4 +917,36 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+initSidebarCustomSelect({
+  choices: DYNAMIC_CHOICES,
+  triggerId: "dynamic-select-trigger",
+  menuId: "dynamic-select-menu",
+  hiddenId: "dynamic-value",
+  textId: "dynamic-select-text",
+  optionIdPrefix: "dynamic",
+});
+initSidebarCustomSelect({
+  choices: GAME_TILE_CHOICES,
+  triggerId: "game-tile-select-trigger",
+  menuId: "game-tile-select-menu",
+  hiddenId: "game-tile-value",
+  textId: "game-tile-select-text",
+  optionIdPrefix: "game-tile",
+});
+initSidebarCustomSelect({
+  choices: GAME_TILE_ICON_CHOICES,
+  triggerId: "game-tile-icon-select-trigger",
+  menuId: "game-tile-icon-select-menu",
+  hiddenId: "game-tile-icon-value",
+  textId: "game-tile-icon-select-text",
+  optionIdPrefix: "game-tile-icon",
+});
+initSidebarCustomSelect({
+  choices: ANIMATION_CHOICES,
+  triggerId: "animation-select-trigger",
+  menuId: "animation-select-menu",
+  hiddenId: "animation-value",
+  textId: "animation-select-text",
+  optionIdPrefix: "animation",
+});
 renderKeyframes();
