@@ -786,6 +786,23 @@ const timelinePlayButton = document.getElementById("timeline-play-button");
 const timelineLoopButton = document.getElementById("timeline-loop-button");
 const timeScrubberTrack = document.getElementById("time-scrubber-track");
 
+const appEl = document.getElementById("app");
+const sidebarEl = document.getElementById("sidebar");
+const sidebarCollapseButton = document.getElementById("sidebar-collapse-button");
+const sidebarExpandButton = document.getElementById("sidebar-expand-button");
+
+function setSidebarCollapsed(collapsed) {
+  if (!appEl || !sidebarEl) return;
+  appEl.classList.toggle("sidebar-collapsed", collapsed);
+  sidebarEl.setAttribute("aria-hidden", collapsed ? "true" : "false");
+  if (sidebarExpandButton) sidebarExpandButton.hidden = !collapsed;
+  if (collapsed) {
+    sidebarExpandButton?.focus();
+  } else {
+    sidebarCollapseButton?.focus();
+  }
+}
+
 function isEditKeyframeModalOpen() {
   return Boolean(editKeyframeModal && !editKeyframeModal.hidden);
 }
@@ -894,6 +911,9 @@ timeScrubberTrack?.addEventListener("click", (e) => {
   applySelectedKeyframeScale();
   openEditKeyframeModalFor(id);
 });
+
+sidebarCollapseButton?.addEventListener("click", () => setSidebarCollapsed(true));
+sidebarExpandButton?.addEventListener("click", () => setSidebarCollapsed(false));
 
 addKeyframeButton?.addEventListener("click", openAddKeyframeModal);
 timelinePlayButton?.addEventListener("click", onTimelinePlayButtonClick);
